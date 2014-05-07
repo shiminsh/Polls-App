@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.http import Http404
 from polls.models import Poll
-from django.shortcuts import render
 from django.template import RequestContext, loader
+from django.shortcuts import render, get_object_or_404
 
 def index(request):
     latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
@@ -13,10 +13,7 @@ def index(request):
     return HttpResponse(template.render(context))
 
 def detail(request, poll_id):
-    try:
-        poll = Poll.objects.get(pk=poll_id)
-    except Poll.DoesNotExist:
-        raise Http404
+    poll = get_object_or_404(Poll, pk=poll_id)
     return render(request, 'polls/detail.html', {'poll': poll})
 
 def results(request, poll_id):
@@ -24,4 +21,5 @@ def results(request, poll_id):
 
 def vote(request, poll_id):
     return HttpResponse("You're voting on poll %s." % poll_id)
+
 
